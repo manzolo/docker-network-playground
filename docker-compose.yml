@@ -8,8 +8,11 @@ services:
       rete2:
         ipv4_address: 192.168.3.10
     command: >
-      --domain=rete1,192.168.2.0/28
-      --domain=rete2,192.168.3.0/28
+      --domain=rete1
+      --domain=rete2
+      --addn-hosts=/etc/dnsmasq.hosts
+      --expand-hosts
+      --domain-needed
       --no-resolv
       --no-hosts
       --log-queries
@@ -17,6 +20,8 @@ services:
       --server=8.8.4.4
     cap_add:
       - NET_ADMIN
+    volumes:
+      - ./dnsmasq.hosts:/etc/dnsmasq.hosts
 
   router:
     image: ubuntu:latest
@@ -35,8 +40,8 @@ services:
       /bin/bash -c "apt-get update &&
                     apt-get install -y iputils-ping iproute2 dnsutils nano  &&
                     sysctl -w net.ipv4.ip_forward=1 &&
-                    ip route replace 192.168.2.0/28 dev eth0 &&
-                    ip route replace 192.168.3.0/28 dev eth1 &&
+                    ip route replace 192.168.3.0/28 via 192.168.3.2 &&
+                    ip route replace 192.168.2.0/28 via 192.168.2.2 &&
                     /bin/bash"
 
   pc1:
@@ -56,8 +61,7 @@ services:
     command: >
       /bin/bash -c "apt-get update &&
                     apt-get install -y iputils-ping iproute2 dnsutils nano  &&
-                    ip route replace default via 192.168.2.1 &&
-                    ip route add 192.168.3.0/28 via 192.168.2.2 &&
+                    ip route replace default via 192.168.2.2 &&
                     /bin/bash"
 
   pc2:
@@ -77,8 +81,7 @@ services:
     command: >
       /bin/bash -c "apt-get update &&
                     apt-get install -y iputils-ping iproute2 dnsutils nano  &&
-                    ip route replace default via 192.168.2.1 &&
-                    ip route add 192.168.3.0/28 via 192.168.2.2 &&
+                    ip route replace default via 192.168.2.2 &&
                     /bin/bash"
 
   pc3:
@@ -98,8 +101,7 @@ services:
     command: >
       /bin/bash -c "apt-get update &&
                     apt-get install -y iputils-ping iproute2 dnsutils nano  &&
-                    ip route replace default via 192.168.3.1 &&
-                    ip route add 192.168.2.0/28 via 192.168.3.2 &&
+                    ip route replace default via 192.168.3.2 &&
                     /bin/bash"
 
 networks:
