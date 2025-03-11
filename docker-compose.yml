@@ -33,7 +33,7 @@ services:
       - 192.168.2.10
     command: >
       /bin/bash -c "apt-get update &&
-                    apt-get install -y iputils-ping iproute2 dnsutils &&
+                    apt-get install -y iputils-ping iproute2 dnsutils nano  &&
                     sysctl -w net.ipv4.ip_forward=1 &&
                     ip route replace 192.168.2.0/28 dev eth0 &&
                     ip route replace 192.168.3.0/28 dev eth1 &&
@@ -55,7 +55,7 @@ services:
       - router
     command: >
       /bin/bash -c "apt-get update &&
-                    apt-get install -y iputils-ping iproute2 dnsutils &&
+                    apt-get install -y iputils-ping iproute2 dnsutils nano  &&
                     ip route replace default via 192.168.2.1 &&
                     ip route add 192.168.3.0/28 via 192.168.2.2 &&
                     /bin/bash"
@@ -76,7 +76,7 @@ services:
       - router
     command: >
       /bin/bash -c "apt-get update &&
-                    apt-get install -y iputils-ping iproute2 dnsutils &&
+                    apt-get install -y iputils-ping iproute2 dnsutils nano  &&
                     ip route replace default via 192.168.2.1 &&
                     ip route add 192.168.3.0/28 via 192.168.2.2 &&
                     /bin/bash"
@@ -97,7 +97,7 @@ services:
       - router
     command: >
       /bin/bash -c "apt-get update &&
-                    apt-get install -y iputils-ping iproute2 dnsutils &&
+                    apt-get install -y iputils-ping iproute2 dnsutils nano  &&
                     ip route replace default via 192.168.3.1 &&
                     ip route add 192.168.2.0/28 via 192.168.3.2 &&
                     /bin/bash"
