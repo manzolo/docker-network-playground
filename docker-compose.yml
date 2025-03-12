@@ -11,11 +11,14 @@ services:
         ipv4_address: 192.168.40.10
       lan_50:
         ipv4_address: 192.168.50.10
+      lan_60:
+        ipv4_address: 192.168.60.10
     command: >
       --domain=lan_20
       --domain=lan_30
       --domain=lan_40
       --domain=lan_50
+      --domain=lan_60
       --addn-hosts=/etc/dnsmasq.hosts
       --expand-hosts
       --domain-needed
@@ -30,7 +33,7 @@ services:
       - ./dnsmasq.hosts:/etc/dnsmasq.hosts
 
   router1:
-    image: ubuntu:24.04
+    image: manzolo/ubuntu-network-playground-router
     container_name: router1
     privileged: true
     stdin_open: true
@@ -46,16 +49,14 @@ services:
       - 192.168.20.10
     depends_on:
       - dns
-    command: >
-      /bin/bash -c "apt-get update &&
-                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils curl wget nano &&
-                    sysctl -w net.ipv4.ip_forward=1 &&
-                    ip route add 192.168.40.0/28 via 192.168.100.3 &&
-                    ip route add 192.168.50.0/28 via 192.168.100.3 &&
-                    /bin/bash"
+    volumes:
+      - ./scripts/router-setup.sh:/scripts/router-setup.sh
+    environment:
+      - ROUTES=192.168.40.0/28 via 192.168.100.3,192.168.50.0/28 via 192.168.100.3,192.168.60.0/28 via 192.168.100.4
+    command: /scripts/router-setup.sh
 
   router2:
-    image: ubuntu:24.04
+    image: manzolo/ubuntu-network-playground-router
     container_name: router2
     privileged: true
     stdin_open: true
@@ -71,17 +72,35 @@ services:
       - 192.168.40.10
     depends_on:
       - dns
-    command: >
-      /bin/bash -c "apt-get update &&
-                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils curl wget nano &&
-                    sysctl -w net.ipv4.ip_forward=1 &&
-                    ip route add 192.168.20.0/28 via 192.168.100.2 &&
-                    ip route add 192.168.30.0/28 via 192.168.100.2 &&
-                    /bin/bash"
+    volumes:
+      - ./scripts/router-setup.sh:/scripts/router-setup.sh
+    environment:
+      - ROUTES=192.168.20.0/28 via 192.168.100.2,192.168.30.0/28 via 192.168.100.2,192.168.60.0/28 via 192.168.100.4
+    command: /scripts/router-setup.sh
 
+  router3:
+    image: manzolo/ubuntu-network-playground-router
+    container_name: router3
+    privileged: true
+    stdin_open: true
+    tty: true
+    networks:
+      lan_60:
+        ipv4_address: 192.168.60.2
+      transit:
+        ipv4_address: 192.168.100.4
+    dns:
+      - 192.168.60.10
+    depends_on:
+      - dns
+    volumes:
+      - ./scripts/router-setup.sh:/scripts/router-setup.sh
+    environment:
+      - ROUTES=192.168.20.0/28 via 192.168.100.2,192.168.30.0/28 via 192.168.100.2,192.168.40.0/28 via 192.168.100.3,192.168.50.0/28 via 192.168.100.3
+    command: /scripts/router-setup.sh
 
   pc1:
-    image: ubuntu:24.04
+    image: manzolo/ubuntu-network-playground-pc
     container_name: pc1
     privileged: true
     stdin_open: true
@@ -94,14 +113,14 @@ services:
     depends_on:
       - dns
       - router1
-    command: >
-      /bin/bash -c "apt-get update &&
-                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils curl wget nano  &&
-                    ip route replace default via 192.168.20.2 &&
-                    /bin/bash"
+    volumes:
+      - ./scripts/pc-setup.sh:/scripts/pc-setup.sh
+    environment:
+      - ROUTES=default via 192.168.20.2
+    command: /scripts/pc-setup.sh
 
   pc2:
-    image: ubuntu:24.04
+    image: manzolo/ubuntu-network-playground-pc
     container_name: pc2
     privileged: true
     stdin_open: true
@@ -114,14 +133,14 @@ services:
     depends_on:
       - dns
       - router1
-    command: >
-      /bin/bash -c "apt-get update &&
-                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils curl wget nano  &&
-                    ip route replace default via 192.168.20.2 &&
-                    /bin/bash"
+    volumes:
+      - ./scripts/pc-setup.sh:/scripts/pc-setup.sh
+    environment:
+      - ROUTES=default via 192.168.20.2
+    command: /scripts/pc-setup.sh
 
   pc3:
-    image: ubuntu:24.04
+    image: manzolo/ubuntu-network-playground-pc
     container_name: pc3
     privileged: true
     stdin_open: true
@@ -134,14 +153,14 @@ services:
     depends_on:
       - dns
       - router1
-    command: >
-      /bin/bash -c "apt-get update &&
-                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils curl wget nano  &&
-                    ip route replace default via 192.168.30.2 &&
-                    /bin/bash"
+    volumes:
+      - ./scripts/pc-setup.sh:/scripts/pc-setup.sh
+    environment:
+      - ROUTES=default via 192.168.30.2
+    command: /scripts/pc-setup.sh
 
   pc4:
-    image: ubuntu:24.04
+    image: manzolo/ubuntu-network-playground-pc
     container_name: pc4
     privileged: true
     stdin_open: true
@@ -154,14 +173,14 @@ services:
     depends_on:
       - dns
       - router2
-    command: >
-      /bin/bash -c "apt-get update &&
-                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils curl wget nano  &&
-                    ip route replace default via 192.168.40.2 &&
-                    /bin/bash"
+    volumes:
+      - ./scripts/pc-setup.sh:/scripts/pc-setup.sh
+    environment:
+      - ROUTES=default via 192.168.40.2
+    command: /scripts/pc-setup.sh
 
   pc5:
-    image: ubuntu:24.04
+    image: manzolo/ubuntu-network-playground-pc
     container_name: pc5
     privileged: true
     stdin_open: true
@@ -174,26 +193,31 @@ services:
     depends_on:
       - dns
       - router2
-    command: >
-      /bin/bash -c "apt-get update &&
-                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils curl wget nano  &&
-                    ip route replace default via 192.168.40.2 &&
-                    /bin/bash"
-  # server_web:
-  #   image: nginx:latest
-  #   container_name: server_web
-  #   networks:
-  #     lan_40:
-  #       ipv4_address: 192.168.40.5
-  #   dns:
-  #     - 192.168.40.10
-  #   depends_on:
-  #     - dns
-  #     - router2
-  #   ports:
-  #     - "80:80"  # Espone la porta 80 del server web all'host
-  #   command: >
-  #     /bin/bash -c "ip route replace default via 192.168.40.2 && nginx -g 'daemon off;'"
+    volumes:
+      - ./scripts/pc-setup.sh:/scripts/pc-setup.sh
+    environment:
+      - ROUTES=default via 192.168.40.2
+    command: /scripts/pc-setup.sh
+
+  server_web:
+    image: manzolo/ubuntu-network-playground-webserver
+    container_name: server_web
+    privileged: true
+    networks:
+      lan_60:
+        ipv4_address: 192.168.60.5
+    dns:
+      - 192.168.60.10
+    depends_on:
+      - dns
+      - router3
+    ports:
+      - "80:80"  # Espone la porta 80 del server web all'host
+    volumes:
+      - ./scripts/web-setup.sh:/scripts/web-setup.sh
+    environment:
+      - ROUTES=default via 192.168.60.2
+    command: /scripts/web-setup.sh
 
 networks:
   lan_20:
@@ -223,6 +247,13 @@ networks:
       config:
         - subnet: 192.168.50.0/28
           gateway: 192.168.50.1
+
+  lan_60:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.60.0/28
+          gateway: 192.168.60.1
 
   transit:
     driver: bridge
