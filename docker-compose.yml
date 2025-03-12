@@ -30,7 +30,7 @@ services:
       - ./dnsmasq.hosts:/etc/dnsmasq.hosts
 
   router1:
-    image: ubuntu:latest
+    image: ubuntu:24.04
     container_name: router1
     privileged: true
     stdin_open: true
@@ -48,14 +48,14 @@ services:
       - dns
     command: >
       /bin/bash -c "apt-get update &&
-                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils nano &&
+                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils curl wget nano &&
                     sysctl -w net.ipv4.ip_forward=1 &&
                     ip route add 192.168.40.0/28 via 192.168.100.3 &&
                     ip route add 192.168.50.0/28 via 192.168.100.3 &&
                     /bin/bash"
 
   router2:
-    image: ubuntu:latest
+    image: ubuntu:24.04
     container_name: router2
     privileged: true
     stdin_open: true
@@ -73,7 +73,7 @@ services:
       - dns
     command: >
       /bin/bash -c "apt-get update &&
-                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils nano &&
+                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils curl wget nano &&
                     sysctl -w net.ipv4.ip_forward=1 &&
                     ip route add 192.168.20.0/28 via 192.168.100.2 &&
                     ip route add 192.168.30.0/28 via 192.168.100.2 &&
@@ -81,7 +81,7 @@ services:
 
 
   pc1:
-    image: ubuntu:latest
+    image: ubuntu:24.04
     container_name: pc1
     privileged: true
     stdin_open: true
@@ -96,12 +96,12 @@ services:
       - router1
     command: >
       /bin/bash -c "apt-get update &&
-                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils nano  &&
+                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils curl wget nano  &&
                     ip route replace default via 192.168.20.2 &&
                     /bin/bash"
 
   pc2:
-    image: ubuntu:latest
+    image: ubuntu:24.04
     container_name: pc2
     privileged: true
     stdin_open: true
@@ -116,12 +116,12 @@ services:
       - router1
     command: >
       /bin/bash -c "apt-get update &&
-                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils nano  &&
+                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils curl wget nano  &&
                     ip route replace default via 192.168.20.2 &&
                     /bin/bash"
 
   pc3:
-    image: ubuntu:latest
+    image: ubuntu:24.04
     container_name: pc3
     privileged: true
     stdin_open: true
@@ -136,12 +136,12 @@ services:
       - router1
     command: >
       /bin/bash -c "apt-get update &&
-                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils nano  &&
+                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils curl wget nano  &&
                     ip route replace default via 192.168.30.2 &&
                     /bin/bash"
 
   pc4:
-    image: ubuntu:latest
+    image: ubuntu:24.04
     container_name: pc4
     privileged: true
     stdin_open: true
@@ -156,12 +156,12 @@ services:
       - router2
     command: >
       /bin/bash -c "apt-get update &&
-                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils nano  &&
+                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils curl wget nano  &&
                     ip route replace default via 192.168.40.2 &&
                     /bin/bash"
 
   pc5:
-    image: ubuntu:latest
+    image: ubuntu:24.04
     container_name: pc5
     privileged: true
     stdin_open: true
@@ -176,9 +176,24 @@ services:
       - router2
     command: >
       /bin/bash -c "apt-get update &&
-                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils nano  &&
+                    apt-get install -y iputils-ping iproute2 traceroute iputils-tracepath dnsutils curl wget nano  &&
                     ip route replace default via 192.168.40.2 &&
                     /bin/bash"
+  # server_web:
+  #   image: nginx:latest
+  #   container_name: server_web
+  #   networks:
+  #     lan_40:
+  #       ipv4_address: 192.168.40.5
+  #   dns:
+  #     - 192.168.40.10
+  #   depends_on:
+  #     - dns
+  #     - router2
+  #   ports:
+  #     - "80:80"  # Espone la porta 80 del server web all'host
+  #   command: >
+  #     /bin/bash -c "ip route replace default via 192.168.40.2 && nginx -g 'daemon off;'"
 
 networks:
   lan_20:
