@@ -1,43 +1,46 @@
-NETWORKS:
+# Docker Compose Network Simulation
 
-1. LAN 20 (192.168.20.0/28)
-   - Gateway: 192.168.20.1
-   - DNS Server: 192.168.20.10 (dnsmasq)
-   - Router1: 192.168.20.2
-   - PC1: 192.168.20.3
-   - PC2: 192.168.20.4
+This project simulates a network using Docker Compose.
 
-2. LAN 30 (192.168.30.0/28)
-   - Gateway: 192.168.30.1
-   - DNS Server: 192.168.30.10 (dnsmasq)
-   - Router1: 192.168.30.2
-   - PC3: 192.168.30.3
+![Example](doc/image.png)
 
-3. LAN 40 (192.168.40.0/28)
-   - Gateway: 192.168.40.1
-   - DNS Server: 192.168.40.10 (dnsmasq)
-   - Router2: 192.168.40.2
-   - PC4: 192.168.40.3
-   - PC5: 192.168.40.4
+## Services
 
-4. LAN 50 (192.168.50.0/28)
-   - Gateway: 192.168.50.1
-   - DNS Server: 192.168.50.10 (dnsmasq)
-   - Router2: 192.168.50.2
+* **dns (dnsmasq):** Provides DNS services.
+* **router1, router2, router3:** Simulate routers.
+* **pc1, pc2, pc3, pc4, pc5:** Simulate client PCs.
+* **server_web:** Simulates a web server.
 
-5. TRANSIT NETWORK (192.168.100.0/29)
-   - Gateway: 192.168.100.1
-   - Router1: 192.168.100.2
-   - Router2: 192.168.100.3
+## Network Topology
 
-ROUTER CONFIGURATIONS:
+* **LANs:**
+    * lan\_20: 192.168.20.0/28
+    * lan\_30: 192.168.30.0/28
+    * lan\_40: 192.168.40.0/28
+    * lan\_60: 192.168.60.0/28
+* **Transit Networks:**
+    * transit\_12: 192.168.100.0/29 (router1 <-> router2)
+    * transit\_23: 192.168.200.0/29 (router2 <-> router3)
+* **Router Connections:**
+    * router1: lan\_20, lan\_30, transit\_12
+    * router2: lan\_40, transit\_12, transit\_23
+    * router3: lan\_60, transit\_23
+* **PC Connections:**
+    * pc1, pc2: lan\_20
+    * pc3: lan\_30
+    * pc4, pc5: lan\_40
+    * server\_web: lan\_60
 
-- Router1 (192.168.20.2, 192.168.30.2, 192.168.100.2)
-  - Routes:
-    - 192.168.40.0/28 via 192.168.100.3
-    - 192.168.50.0/28 via 192.168.100.3
+## Usage
 
-- Router2 (192.168.40.2, 192.168.50.2, 192.168.100.3)
-  - Routes:
-    - 192.168.20.0/28 via 192.168.100.2
-    - 192.168.30.0/28 via 192.168.100.2
+1.  Ensure Docker and Docker Compose are installed.
+2.  Clone this repository.
+3.  Run `docker-compose up --build`.
+4.  Access containers: `docker exec -it <container_name> bash`.
+
+## Notes
+
+* For educational purposes.
+* Configuration scripts in `scripts/`.
+* dns host file in `dnsmasq.hosts`.
+* webserver port 80 is exposed.

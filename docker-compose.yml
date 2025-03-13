@@ -9,15 +9,12 @@ services:
         ipv4_address: 192.168.30.10
       lan_40:
         ipv4_address: 192.168.40.10
-      lan_50:
-        ipv4_address: 192.168.50.10
       lan_60:
         ipv4_address: 192.168.60.10
     command: >
       --domain=lan_20
       --domain=lan_30
       --domain=lan_40
-      --domain=lan_50
       --domain=lan_60
       --addn-hosts=/etc/dnsmasq.hosts
       --expand-hosts
@@ -43,7 +40,7 @@ services:
         ipv4_address: 192.168.20.2
       lan_30:
         ipv4_address: 192.168.30.2
-      transit:
+      transit_12:
         ipv4_address: 192.168.100.2
     dns:
       - 192.168.20.10
@@ -52,7 +49,7 @@ services:
     volumes:
       - ./scripts/router-setup.sh:/scripts/router-setup.sh
     environment:
-      - ROUTES=192.168.40.0/28 via 192.168.100.3,192.168.50.0/28 via 192.168.100.3,192.168.60.0/28 via 192.168.100.4
+      - ROUTES=192.168.40.0/28 via 192.168.100.3,192.168.60.0/28 via 192.168.100.3
     command: /scripts/router-setup.sh
 
   router2:
@@ -64,10 +61,10 @@ services:
     networks:
       lan_40:
         ipv4_address: 192.168.40.2
-      lan_50:
-        ipv4_address: 192.168.50.2
-      transit:
+      transit_12:
         ipv4_address: 192.168.100.3
+      transit_23:
+        ipv4_address: 192.168.200.2
     dns:
       - 192.168.40.10
     depends_on:
@@ -75,7 +72,7 @@ services:
     volumes:
       - ./scripts/router-setup.sh:/scripts/router-setup.sh
     environment:
-      - ROUTES=192.168.20.0/28 via 192.168.100.2,192.168.30.0/28 via 192.168.100.2,192.168.60.0/28 via 192.168.100.4
+      - ROUTES=192.168.20.0/28 via 192.168.100.2,192.168.30.0/28 via 192.168.100.2,192.168.60.0/28 via 192.168.200.3
     command: /scripts/router-setup.sh
 
   router3:
@@ -87,8 +84,8 @@ services:
     networks:
       lan_60:
         ipv4_address: 192.168.60.2
-      transit:
-        ipv4_address: 192.168.100.4
+      transit_23:
+        ipv4_address: 192.168.200.3
     dns:
       - 192.168.60.10
     depends_on:
@@ -96,7 +93,7 @@ services:
     volumes:
       - ./scripts/router-setup.sh:/scripts/router-setup.sh
     environment:
-      - ROUTES=192.168.20.0/28 via 192.168.100.2,192.168.30.0/28 via 192.168.100.2,192.168.40.0/28 via 192.168.100.3,192.168.50.0/28 via 192.168.100.3
+      - ROUTES=192.168.20.0/28 via 192.168.200.2,192.168.30.0/28 via 192.168.200.2,192.168.40.0/28 via 192.168.200.2
     command: /scripts/router-setup.sh
 
   pc1:
@@ -241,13 +238,6 @@ networks:
         - subnet: 192.168.40.0/28
           gateway: 192.168.40.1
 
-  lan_50:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 192.168.50.0/28
-          gateway: 192.168.50.1
-
   lan_60:
     driver: bridge
     ipam:
@@ -255,9 +245,16 @@ networks:
         - subnet: 192.168.60.0/28
           gateway: 192.168.60.1
 
-  transit:
+  transit_12:
     driver: bridge
     ipam:
       config:
         - subnet: 192.168.100.0/29
           gateway: 192.168.100.1
+
+  transit_23:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.200.0/29
+          gateway: 192.168.200.1
