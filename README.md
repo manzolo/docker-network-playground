@@ -35,8 +35,19 @@ This project simulates a network using Docker Compose.
 
 1.  Ensure Docker and Docker Compose are installed.
 2.  Clone this repository.
-3.  Run `docker-compose up --build`.
-4.  Access containers: `docker exec -it <container_name> bash`.
+3.  Run the `menu.sh` script for interactive control.
+
+## Interactive Menu (menu.sh)
+
+The `menu.sh` script provides an interactive command-line interface to manage the Docker network. Here's what it does:
+
+* **Build Images:** Builds the Docker images for PCs, routers, and the web server using their respective Dockerfiles located in the `images/` directory.
+* **Run Docker Compose:** Starts the Docker network using `docker compose up -d`. It first stops and removes any existing containers and networks to ensure a clean start.
+* **Stop Docker Compose:** Stops and removes all running containers and networks using `docker compose down` and `docker compose rm -f`.
+* **Show Compose Logs:** Displays the logs of the running Docker containers using `docker compose logs -f`, allowing you to monitor the network's activity.
+* **Enter Containers:** Allows you to enter any of the running containers (PCs, routers, web server) using `docker exec -it <container_name> bash`. This provides a shell inside the container for inspection or configuration.
+* **Main Menu:** Presents a menu with options to perform the above actions, making it easy to manage the Docker network without remembering complex Docker commands.
+
 
 ## Notes
 
