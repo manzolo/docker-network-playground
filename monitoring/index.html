@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Playground - Monitoring Dashboard</title>
+    <link rel="stylesheet" href="/dashboard/dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌐 Network Playground Monitor</h1>
+            <div class="header-info">
+                <span id="last-update">Last update: --:--:--</span>
+                <span class="separator">|</span>
+                <span id="auto-refresh">Auto-refresh: <span class="status-active">ON</span></span>
+            </div>
+        </header>
+
+        <div class="dashboard">
+            <!-- Container Status Section -->
+            <section class="card">
+                <h2>📊 Container Status</h2>
+                <div id="container-status" class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Container</th>
+                                <th>Status</th>
+                                <th>Health</th>
+                                <th>Uptime</th>
+                            </tr>
+                        </thead>
+                        <tbody id="status-tbody">
+                            <tr>
+                                <td colspan="4" class="loading">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Resource Usage Section -->
+            <section class="card">
+                <h2>💻 Resource Usage</h2>
+                <div id="resource-stats" class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Container</th>
+                                <th>CPU</th>
+                                <th>Memory</th>
+                                <th>Network I/O</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stats-tbody">
+                            <tr>
+                                <td colspan="4" class="loading">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Network Info Section -->
+            <section class="card">
+                <h2>🔗 Network Information</h2>
+                <div id="network-info" class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Network</th>
+                                <th>Subnet</th>
+                                <th>Containers</th>
+                            </tr>
+                        </thead>
+                        <tbody id="network-tbody">
+                            <tr>
+                                <td colspan="3" class="loading">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Topology Section -->
+            <section class="card">
+                <h2>🗺️ Network Topology</h2>
+                <div id="topology-info" class="topology-grid">
+                    <div class="loading">Loading topology...</div>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>Docker Network Playground |
+               <a href="https://github.com/manzolo/net-playground" target="_blank">GitHub</a> |
+               Refresh interval: 10s</p>
+        </footer>
+    </div>
+
+    <script src="/dashboard/dashboard.js"></script>
+</body>
+</html>

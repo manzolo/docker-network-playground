@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-01-21T11:11:48Z",
+  "stats": [
+    {"name": "pc1", "cpu": "0.00%", "memory": "15.31MiB / 31.18GiB", "network": "22.5kB / 21.1kB", "block_io": "14.7MB / 0B"},
+    {"name": "pc2", "cpu": "0.00%", "memory": "1.59MiB / 31.18GiB", "network": "16.1kB / 6.43kB", "block_io": "0B / 0B"},
+    {"name": "pc3", "cpu": "0.00%", "memory": "1.629MiB / 31.18GiB", "network": "16.7kB / 7.18kB", "block_io": "0B / 0B"},
+    {"name": "pc4", "cpu": "0.00%", "memory": "1.816MiB / 31.18GiB", "network": "18.1kB / 8.51kB", "block_io": "188kB / 0B"},
+    {"name": "pc5", "cpu": "0.00%", "memory": "3.148MiB / 31.18GiB", "network": "16.3kB / 6.68kB", "block_io": "1.86MB / 0B"},
+    {"name": "router1", "cpu": "0.00%", "memory": "3.062MiB / 31.18GiB", "network": "59.3kB / 21.6kB", "block_io": "1.84MB / 0B"},
+    {"name": "router2", "cpu": "0.00%", "memory": "3.496MiB / 31.18GiB", "network": "43.2kB / 14.3kB", "block_io": "2.42MB / 0B"},
+    {"name": "router3", "cpu": "0.00%", "memory": "4.762MiB / 31.18GiB", "network": "20.4kB / 980B", "block_io": "4.16MB / 0B"},
+    {"name": "server_web", "cpu": "0.00%", "memory": "32.22MiB / 31.18GiB", "network": "282kB / 31.8kB", "block_io": "20.6MB / 4.1kB"},
+    {"name": "dnsmasq", "cpu": "0.00%", "memory": "496KiB / 31.18GiB", "network": "25.4kB / 6.69kB", "block_io": "0B / 4.1kB"}
+  ]
+}

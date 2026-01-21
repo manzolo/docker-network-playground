@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-01-21T11:12:07Z",
+  "networks": [
+    {"name": "lan_20", "subnet": "192.168.20.0/28", "containers": 4},
+    {"name": "lan_30", "subnet": "192.168.30.0/28", "containers": 3},
+    {"name": "lan_40", "subnet": "192.168.40.0/28", "containers": 4},
+    {"name": "lan_60", "subnet": "192.168.60.0/28", "containers": 3},
+    {"name": "transit_12", "subnet": "192.168.100.0/29", "containers": 2},
+    {"name": "transit_23", "subnet": "192.168.200.0/29", "containers": 2}
+  ]
+}

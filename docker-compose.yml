@@ -2,6 +2,16 @@ services:
   dns:
     image: andyshinn/dnsmasq:latest
     container_name: dnsmasq
+    labels:
+      service_type: "infrastructure"
+      zone: "all"
+      tier: "dns"
+    healthcheck:
+      test: ["CMD", "nslookup", "localhost", "127.0.0.1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     networks:
       lan_20:
         ipv4_address: 192.168.20.10
@@ -35,6 +45,16 @@ services:
     privileged: true
     stdin_open: true
     tty: true
+    labels:
+      service_type: "infrastructure"
+      zone: "lan_20_30"
+      tier: "router"
+    healthcheck:
+      test: ["CMD", "sh", "-c", "sysctl net.ipv4.ip_forward | grep -q '= 1'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
     networks:
       lan_20:
         ipv4_address: 192.168.20.2
@@ -58,6 +78,16 @@ services:
     privileged: true
     stdin_open: true
     tty: true
+    labels:
+      service_type: "infrastructure"
+      zone: "transit"
+      tier: "router"
+    healthcheck:
+      test: ["CMD", "sh", "-c", "sysctl net.ipv4.ip_forward | grep -q '= 1'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
     networks:
       lan_40:
         ipv4_address: 192.168.40.2
@@ -81,6 +111,16 @@ services:
     privileged: true
     stdin_open: true
     tty: true
+    labels:
+      service_type: "infrastructure"
+      zone: "lan_60"
+      tier: "router"
+    healthcheck:
+      test: ["CMD", "sh", "-c", "sysctl net.ipv4.ip_forward | grep -q '= 1'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
     networks:
       lan_60:
         ipv4_address: 192.168.60.2
@@ -102,6 +142,16 @@ services:
     privileged: true
     stdin_open: true
     tty: true
+    labels:
+      service_type: "client"
+      zone: "lan_20"
+      tier: "endpoint"
+    healthcheck:
+      test: ["CMD", "ping", "-c", "1", "-W", "1", "192.168.20.2"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     networks:
       lan_20:
         ipv4_address: 192.168.20.3
@@ -122,6 +172,16 @@ services:
     privileged: true
     stdin_open: true
     tty: true
+    labels:
+      service_type: "client"
+      zone: "lan_20"
+      tier: "endpoint"
+    healthcheck:
+      test: ["CMD", "ping", "-c", "1", "-W", "1", "192.168.20.2"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     networks:
       lan_20:
         ipv4_address: 192.168.20.4
@@ -142,6 +202,16 @@ services:
     privileged: true
     stdin_open: true
     tty: true
+    labels:
+      service_type: "client"
+      zone: "lan_30"
+      tier: "endpoint"
+    healthcheck:
+      test: ["CMD", "ping", "-c", "1", "-W", "1", "192.168.30.2"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     networks:
       lan_30:
         ipv4_address: 192.168.30.3
@@ -162,6 +232,16 @@ services:
     privileged: true
     stdin_open: true
     tty: true
+    labels:
+      service_type: "client"
+      zone: "lan_40"
+      tier: "endpoint"
+    healthcheck:
+      test: ["CMD", "ping", "-c", "1", "-W", "1", "192.168.40.2"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     networks:
       lan_40:
         ipv4_address: 192.168.40.3
@@ -182,6 +262,16 @@ services:
     privileged: true
     stdin_open: true
     tty: true
+    labels:
+      service_type: "client"
+      zone: "lan_40"
+      tier: "endpoint"
+    healthcheck:
+      test: ["CMD", "ping", "-c", "1", "-W", "1", "192.168.40.2"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     networks:
       lan_40:
         ipv4_address: 192.168.40.4
@@ -200,6 +290,16 @@ services:
     image: manzolo/ubuntu-network-playground-webserver
     container_name: server_web
     privileged: true
+    labels:
+      service_type: "application"
+      zone: "lan_60"
+      tier: "web"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     networks:
       lan_60:
         ipv4_address: 192.168.60.5
@@ -212,6 +312,7 @@ services:
       - "80:80"  # Espone la porta 80 del server web all'host
     volumes:
       - ./scripts/web-setup.sh:/scripts/web-setup.sh
+      - ./monitoring:/usr/share/nginx/html/dashboard:ro
     environment:
       - ROUTES=default via 192.168.60.2
     command: /scripts/web-setup.sh

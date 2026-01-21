@@ -1,0 +1,19 @@
+# Ensure consistent line endings
+* text=auto
+
+# Shell scripts should have LF line endings and be executable
+*.sh text eol=lf
+
+# Ensure Python scripts have LF line endings
+*.py text eol=lf
+
+# Ensure markdown files have LF line endings
+*.md text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary

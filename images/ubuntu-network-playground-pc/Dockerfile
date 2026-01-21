@@ -3,7 +3,7 @@ FROM ubuntu:24.04
 
 # Installa i pacchetti necessari
 RUN apt-get update && \
-    apt-get install -y iputils-ping iproute2 tcpdump wget curl traceroute iputils-tracepath dnsutils nano && \
+    apt-get install -y iputils-ping iproute2 tcpdump wget curl traceroute iputils-tracepath dnsutils nano iperf3 && \
     apt-get clean
 
 # Copia lo script di configurazione

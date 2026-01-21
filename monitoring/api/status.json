@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-01-21T11:11:48Z",
+  "containers": [
+    {"name": "pc1", "status": "running", "health": "healthy", "started_at": "2026-01-21T10:53:01.581191686Z"},
+    {"name": "pc2", "status": "running", "health": "healthy", "started_at": "2026-01-21T10:53:01.58561026Z"},
+    {"name": "pc3", "status": "running", "health": "healthy", "started_at": "2026-01-21T10:53:01.584500216Z"},
+    {"name": "pc4", "status": "running", "health": "healthy", "started_at": "2026-01-21T10:53:01.579597047Z"},
+    {"name": "pc5", "status": "running", "health": "healthy", "started_at": "2026-01-21T10:53:01.57183831Z"},
+    {"name": "router1", "status": "running", "health": "healthy", "started_at": "2026-01-21T10:53:01.349405442Z"},
+    {"name": "router2", "status": "running", "health": "healthy", "started_at": "2026-01-21T10:53:01.348489845Z"},
+    {"name": "router3", "status": "running", "health": "healthy", "started_at": "2026-01-21T10:53:01.347551669Z"},
+    {"name": "server_web", "status": "running", "health": "healthy", "started_at": "2026-01-21T10:53:01.558924334Z"},
+    {"name": "dnsmasq", "status": "running", "health": "healthy", "started_at": "2026-01-21T10:53:27.385173932Z"}
+  ]
+}

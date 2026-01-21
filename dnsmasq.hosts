@@ -9,5 +9,6 @@
 192.168.30.2 router1 router1.lan_30
 192.168.100.3 router2 router2.transit
 192.168.40.2 router2 router2.lan_40
-192.168.50.2 router2 router2.lan_50
-192.168.100.4 router3 router3.transit
+192.168.200.2 router2 router2.transit_23
+192.168.200.3 router3 router3.transit_23
+192.168.60.2 router3 router3.lan_60
