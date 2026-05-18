@@ -7,7 +7,7 @@ RUN apt-get update && \
     apt-get clean
 
 # Copia lo script di configurazione
-COPY ../scripts/router-setup.sh /scripts/router-setup.sh
+COPY scripts/router-setup.sh /scripts/router-setup.sh
 RUN chmod +x /scripts/router-setup.sh
 
 # Imposta il comando di default

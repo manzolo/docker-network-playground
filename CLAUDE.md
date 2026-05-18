@@ -20,7 +20,7 @@ This is a Docker-based network simulation environment for educational purposes. 
 # Start environment
 ./menu.sh start
 
-# Run all tests (should pass 27/27)
+# Run all tests (should pass 27/27 — 13 connectivity + 14 DNS)
 ./menu.sh test-all
 
 # Generate monitoring data
@@ -112,13 +112,15 @@ The dnsmasq service is multi-homed (connected to all LANs) and provides:
 ## Project Structure
 
 ```
-net-playground/
+docker-network-playground/
 ├── README.md                          # Main documentation with badges, Mermaid diagrams
 ├── CLAUDE.md                          # This file - developer guidance
 ├── docker-compose.yml                 # Container orchestration with health checks
 ├── dnsmasq.hosts                      # DNS hostname mappings
 ├── menu.sh                            # Interactive and CLI menu system
 ├── .gitattributes                     # Git attributes for script permissions
+├── .gitignore                         # Ignored files (runtime-generated JSON)
+├── .github/workflows/ci.yml           # GitHub Actions: shellcheck + build + integration tests
 │
 ├── images/                            # Docker image definitions
 │   ├── ubuntu-network-playground-pc/
@@ -160,6 +162,8 @@ net-playground/
 ├── scenarios/                         # Pre-configured network scenarios
 │   ├── README.md                      # Scenarios overview
 │   ├── 01-basic-firewall.sh          # Firewall configuration tutorial
+│   ├── 02-nat-gateway.sh             # SNAT/DNAT/port-forwarding
+│   ├── 03-network-problems.sh        # Latency/loss/bandwidth with tc
 │   └── 04-traffic-generation.sh      # Traffic generation tutorial
 │
 ├── docs/                              # Documentation
@@ -195,9 +199,9 @@ net-playground/
 
 ### 3. Test Automation
 
-- **Connectivity tests**: `./menu.sh test-connectivity` (27 tests)
-- **DNS tests**: `./menu.sh test-dns` (10 tests)
-- **Full suite**: `./menu.sh test-all` (runs all)
+- **Connectivity tests**: `./menu.sh test-connectivity` (13 tests)
+- **DNS tests**: `./menu.sh test-dns` (14 tests)
+- **Full suite**: `./menu.sh test-all` (27 tests total)
 - **Troubleshoot wizard**: `./menu.sh troubleshoot` (automated diagnostics)
 
 ### 4. Network Scenarios
@@ -222,8 +226,13 @@ All containers execute setup scripts on startup:
 
 ### router-setup.sh
 - Enables IP forwarding: `sysctl -w net.ipv4.ip_forward=1`
+- Disables reverse-path filtering (`rp_filter=0`) so inter-LAN traffic is not dropped
 - Applies routes from `$ROUTES` environment variable
 - Configures iptables FORWARD policy for routing
+- Installs MASQUERADE on every interface (controlled by `MASQUERADE` env var, default `1`).
+  Set `MASQUERADE=0` per-router in `docker-compose.yml` to preserve the original
+  source IP across hops — useful for didactic traceroute/tcpdump exercises where
+  the NAT would otherwise hide the real client address.
 - Applied to: router1, router2, router3
 
 ### pc-setup.sh
@@ -278,16 +287,23 @@ Routes are parsed from comma-separated `$ROUTES` environment variable and applie
 
 ### Docker Bridge Network Isolation
 
-**Critical limitation**: Docker bridge networks are isolated by design.
+**Critical limitation**: Docker bridge networks are isolated by design — packets
+crossing bridges are not forwarded back through the original bridge unless the
+return path's source IP is reachable. To work around this the routers install
+MASQUERADE on every interface (see `scripts/router-setup.sh`).
 
-This means:
+Result:
 - ✅ **Works**: Same-LAN communication (pc1 ↔ pc2)
 - ✅ **Works**: PC to gateway router
 - ✅ **Works**: Router to router (via transit networks)
 - ✅ **Works**: PC to services via routing
-- ⚠️ **Limited**: Direct cross-LAN PC-to-PC may not work without specific iptables rules
+- ✅ **Works**: Cross-LAN PC-to-PC (thanks to MASQUERADE on the routers)
 
-This is **expected behavior** and demonstrates network segmentation.
+**Educational caveat**: with MASQUERADE on, `tcpdump`/`traceroute` on the
+destination LAN will show the *router*'s IP as source, not the original PC.
+Disable per-router with `MASQUERADE=0` in `docker-compose.yml` for exercises
+that need the true source address (cross-LAN connectivity then becomes limited
+by Docker bridge isolation, which is itself a useful didactic demonstration).
 
 ### Network Naming
 
@@ -454,7 +470,7 @@ After making changes:
 
 # 4. Run tests
 ./menu.sh test-all
-# Should pass 27/27 tests
+# Should pass 27/27 tests (13 connectivity + 14 DNS)
 
 # 5. Generate monitoring data
 ./menu.sh monitor
@@ -483,9 +499,9 @@ All tests in `scripts/test-connectivity.sh` and `scripts/test-dns.sh` should pas
 ./menu.sh test-all
 
 # Expected output:
-# Connectivity Tests: 27/27 PASSED
-# DNS Tests: 10/10 PASSED
-# Overall: 37/37 PASSED
+# Connectivity Tests: 13/13 PASSED
+# DNS Tests: 14/14 PASSED
+# Overall: 27/27 PASSED
 ```
 
 ## Troubleshooting
@@ -608,8 +624,8 @@ MIT License - See LICENSE file for details
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/manzolo/net-playground/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/manzolo/net-playground/discussions)
+- **Issues**: [GitHub Issues](https://github.com/manzolo/docker-network-playground/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/manzolo/docker-network-playground/discussions)
 - **Documentation**: [docs/](docs/)
 
 ## Version History

@@ -409,8 +409,8 @@ scenarios_menu() {
 
         case $choice in
             1) run_scenario "01-basic-firewall.sh"; read -p "Press Enter to continue..." ;;
-            2) warn "Scenario not yet created"; sleep 1 ;;
-            3) warn "Scenario not yet created"; sleep 1 ;;
+            2) run_scenario "02-nat-gateway.sh"; read -p "Press Enter to continue..." ;;
+            3) run_scenario "03-network-problems.sh"; read -p "Press Enter to continue..." ;;
             4) run_scenario "04-traffic-generation.sh"; read -p "Press Enter to continue..." ;;
             b) return ;;
             *) error "Invalid option"; sleep 1 ;;

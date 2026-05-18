@@ -7,7 +7,7 @@ RUN apt-get update && \
     apt-get clean
 
 # Copia lo script di configurazione
-COPY ../scripts/web-setup.sh /scripts/web-setup.sh
+COPY scripts/web-setup.sh /scripts/web-setup.sh
 RUN chmod +x /scripts/web-setup.sh
 
 # Copia i file HTML personalizzati

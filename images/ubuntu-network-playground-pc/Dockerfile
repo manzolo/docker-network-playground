@@ -7,7 +7,7 @@ RUN apt-get update && \
     apt-get clean
 
 # Copia lo script di configurazione
-COPY ../scripts/pc-setup.sh /scripts/pc-setup.sh
+COPY scripts/pc-setup.sh /scripts/pc-setup.sh
 RUN chmod +x /scripts/pc-setup.sh
 
 # Imposta il comando di default

@@ -1,8 +1,8 @@
 #!/bin/bash
-# Configura pc
+set -euo pipefail
 
 # Aggiungi le rotte passate tramite variabili d'ambiente
-if [ -n "$ROUTES" ]; then
+if [ -n "${ROUTES:-}" ]; then
   IFS=',' read -ra ROUTE_ARRAY <<< "$ROUTES"
   for route in "${ROUTE_ARRAY[@]}"; do
     ip route replace $route
@@ -10,4 +10,4 @@ if [ -n "$ROUTES" ]; then
 fi
 
 # Mantieni il container attivo
-/bin/bash
+exec /bin/bash

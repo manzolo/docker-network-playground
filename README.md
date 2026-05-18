@@ -1,5 +1,6 @@
 # 🌐 Docker Network Playground
 
+[![CI](https://github.com/manzolo/docker-network-playground/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/manzolo/docker-network-playground/actions/workflows/ci.yml)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://www.linux.org/)
@@ -40,8 +41,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/manzolo/net-playground.git
-cd net-playground
+git clone https://github.com/manzolo/docker-network-playground.git
+cd docker-network-playground
 
 # Build images
 ./menu.sh build
@@ -288,7 +289,7 @@ firefox http://localhost/dashboard/
 
 The playground includes ready-to-run scenarios:
 
-### 01 - Basic Firewall Configuration
+### 01 — Basic Firewall Configuration
 Learn iptables basics with guided examples:
 - Block ICMP from specific hosts
 - Rate limiting (anti-DDoS)
@@ -298,7 +299,22 @@ Learn iptables basics with guided examples:
 ./menu.sh scenario 01-basic-firewall.sh
 ```
 
-### 04 - Traffic Generation
+### 02 — NAT Gateway
+SNAT, DNAT and port-forwarding configuration on the routers.
+
+```bash
+./menu.sh scenario 02-nat-gateway.sh
+```
+
+### 03 — Network Problems Simulation
+Inject latency, jitter, packet loss and bandwidth caps with `tc` to observe the
+effect on applications.
+
+```bash
+./menu.sh scenario 03-network-problems.sh
+```
+
+### 04 — Traffic Generation
 Generate various types of network traffic:
 - HTTP requests
 - Continuous ping
@@ -532,8 +548,14 @@ Watch the playground in action:
 **Q: Can I modify the network topology?**
 A: Yes! Edit `docker-compose.yml` to add networks or containers. Update routing accordingly.
 
-**Q: Why doesn't cross-LAN ping work between all PCs?**
-A: Docker's bridge driver isolates networks by design. This demonstrates network segmentation. Same-LAN connectivity and router transit work perfectly.
+**Q: Cross-LAN ping seems to come from the router, not the original PC. Why?**
+A: To work around Docker's bridge isolation, every router installs a
+`MASQUERADE` rule on each interface. This makes inter-LAN traffic *work*, at the
+cost of rewriting the source IP to the router's address. To see the real source
+addresses (useful for `tcpdump` / `traceroute` exercises), set
+`MASQUERADE=0` in the router's `environment:` block in `docker-compose.yml`
+and restart. With masquerade disabled cross-LAN connectivity becomes limited
+by Docker bridge isolation — which is itself a useful didactic demonstration.
 
 **Q: Can I use this for production?**
 A: No, this is an educational tool. It's not hardened or optimized for production use.
@@ -566,8 +588,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/manzolo/net-playground/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/manzolo/net-playground/discussions)
+- **Issues**: [GitHub Issues](https://github.com/manzolo/docker-network-playground/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/manzolo/docker-network-playground/discussions)
 - **Documentation**: [docs/](docs/)
 
 ---
